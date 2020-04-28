@@ -7,6 +7,7 @@ const inquirer = require("inquirer");
 const OUTPUT_DIR = path.resolve(__dirname, "output")
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
+
 inquirer.prompt ([
         {
         type: "input", 
@@ -44,7 +45,19 @@ inquirer.prompt ([
         name: "officeNumber"
         }
     ])
+
+    
     .then(function(response) {
-        console.log(response)
-        render ();
+        const employees = []
+        if (response.role === "Manager") {
+            const newManager = new Manager(response.name, response.id, response.email, response.officeNumber)
+            employees.push(newManager)
+        } else if (response.role === "Engineer") {
+            const newEngineer = new Engineer(response.name, response.id, response.email, response.github)
+            employees.push(newEngineer)
+        } else if (response.role === "Intern") {
+            const newIntern = new Intern(response.name, response.id, response.email, response.school)
+            employees.push(newIntern)
+        }
+        fs.writeFile(outputPath, render(employees), () => console.log("done!"));
     })
